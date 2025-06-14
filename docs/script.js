@@ -173,9 +173,92 @@ async function loadStarshipOptions() {
         select.appendChild(option);
     });
 }
+async function loadSpeciesTotalsChart() {
+    // Obtener todas las películas
+    const films = await fetchData("films");
+
+    // Para cada película, recolectar las especies únicas
+    const speciesCountByFilm = {};
+
+    for (const film of films) {
+        const speciesSet = new Set();
+
+        // Traemos datos de cada personaje
+        const charactersData = await Promise.all(
+            film.characters.map(url => fetch(url).then(res => res.json()))
+        );
+
+        for (const char of charactersData) {
+            if (char.species.length === 0) {
+                // Humanos los contamos como "Human"
+                speciesSet.add("Human");
+            } else {
+                // Agregar cada especie (por ahora sólo la primera especie)
+                for (const speciesUrl of char.species) {
+                    const speciesData = await fetch(speciesUrl).then(res => res.json());
+                    speciesSet.add(speciesData.name);
+                }
+            }
+        }
+
+        speciesCountByFilm[film.title] = speciesSet.size;
+    }
+
+    // Preparar datos para Chart.js
+    const labels = Object.keys(speciesCountByFilm);
+    const data = Object.values(speciesCountByFilm);
+
+    const ctx = document.getElementById('speciesChart').getContext('2d');
+
+    // Crear gráfico tipo barra
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Total de especies únicas',
+                data,
+                backgroundColor: 'rgba(255, 213, 0, 0.7)', // amarillo estilo Star Wars
+                borderColor: 'rgba(255, 213, 0, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    precision: 0,
+                    ticks: {
+                        color: '#FFD500', // color texto eje y
+                    },
+                    grid: {
+                        color: '#444' // color de la grilla
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#FFD500', // color texto eje x
+                    },
+                    grid: {
+                        color: '#444'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#FFD500' // color leyenda
+                    }
+                }
+            }
+        }
+    });
+}
+
 
 // 🚀 Carga inicial
 loadAll();
 loadFilmOptions();
 showMostPopulatedPlanet();
 loadStarshipOptions();
+loadSpeciesTotalsChart();  

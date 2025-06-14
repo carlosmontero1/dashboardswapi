@@ -1,51 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Inteligencia Rebelde - Dashboard SWAPI</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <title>Inteligencia Rebelde - Dashboard SWAPI</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <body>
-  <header>
-    <h1>Tablero de Inteligencia Rebelde</h1>
-    <p>Consumiendo datos desde SWAPI en tiempo real</p>
-  </header>
+    <header>
+        <h1>Tablero de Inteligencia Rebelde</h1>
+        <p>Consumiendo datos desde SWAPI en tiempo real</p>
+    </header>
 
-  <section class="controls">
-    <button onclick="loadData('starships')">🚀 Naves</button>
-    <button onclick="loadData('planets')">🌍 Planetas</button>
-    <button onclick="loadData('people')">🧑 Personajes</button>
-    <button onclick="loadAll()">🔁 Recargar Todo</button>
-  </section>
+    <section class="controls">
+        <button onclick="loadData('starships')">🚀 Naves</button>
+        <button onclick="loadData('planets')">🌍 Planetas</button>
+        <button onclick="loadData('people')">🧑 Personajes</button>
+        <button onclick="loadAll()">🔁 Recargar Todo</button>
+    </section>
 
-  <section class="extra-tools">
-    <div class="search-section">
-  <h2>🔎 Identificador de Pilotos</h2>
-  <!-- Cambia input text por un select -->
-  <select id="shipSelect">
-    <option value="">-- Selecciona una nave --</option>
-  </select>
-  <button onclick="findPilots()">Buscar Pilotos</button>
-  <div id="pilotResults"></div>
-</div>
+    <section class="extra-tools">
+        <div class="search-section">
+            <h2>🔎 Identificador de Pilotos</h2>
+            <!-- Cambia input text por un select -->
+            <select id="shipSelect">
+                <option value="">-- Selecciona una nave --</option>
+            </select>
+            <button onclick="findPilots()">Buscar Pilotos</button>
+            <div id="pilotResults"></div>
+        </div>
 
+        <div class="species-total-section">
+            <h2>📈 Total de especies por película</h2>
+            <canvas id="speciesChart" width="400" height="200"></canvas>
+        </div>
 
-    <div class="species-section">
-      <h2>📊 Censo de especies por película</h2>
-      <select id="filmSelect" onchange="countSpeciesByFilm()"></select>
-      <div id="speciesSummary"></div>
+        <div class="species-section">
+            <h2>📊 Censo de especies por película</h2>
+            <select id="filmSelect" onchange="countSpeciesByFilm()"></select>
+            <div id="speciesSummary"></div>
+        </div>        
+
+        <div class="population-section">
+            <h2>🌐 Planeta más poblado</h2>
+            <div id="mostPopulated"></div>
+        </div>
+    </section>
+
+    <div id="dashboard" class="dashboard">
+        <div class="loader">Cargando datos de la galaxia...</div>
     </div>
 
-    <div class="population-section">
-      <h2>🌐 Planeta más poblado</h2>
-      <div id="mostPopulated"></div>
-    </div>
-  </section>
-
-  <div id="dashboard" class="dashboard">
-    <div class="loader">Cargando datos de la galaxia...</div>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>
