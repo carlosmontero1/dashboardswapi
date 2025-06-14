@@ -1,9 +1,9 @@
 const dashboard = document.getElementById("dashboard");
 
 async function fetchData(endpoint) {
-    const response = await fetch(`proxy.php?endpoint=${endpoint}`);
+    const response = await fetch(`https://swapi.info/api/${endpoint}`);
     const data = await response.json();
-    return data.results;
+    return data; // En swapi.info ya es un array
 }
 
 function createCard(title, infoList) {
@@ -84,46 +84,37 @@ function loadAll() {
 }
 
 async function getAllStarships() {
-    let ships = [];
-    let url = 'https://swapi.dev/api/starships/';
-    while (url) {
-        const res = await fetch(url);
-        const data = await res.json();
-        ships = ships.concat(data.results);
-        url = data.next;
-    }
-    return ships;
+    const res = await fetch("https://swapi.info/api/starships");
+    const data = await res.json();
+    return data; // array directamente
 }
 
 async function findPilots() {
-  const select = document.getElementById("shipSelect");
-  const shipUrl = select.value;
-  const resultDiv = document.getElementById("pilotResults");
-  
-  if (!shipUrl) {
-    resultDiv.innerHTML = "🚫 Por favor, selecciona una nave.";
-    return;
-  }
+    const select = document.getElementById("shipSelect");
+    const shipUrl = select.value;
+    const resultDiv = document.getElementById("pilotResults");
 
-  resultDiv.innerHTML = "🔍 Buscando...";
+    if (!shipUrl) {
+        resultDiv.innerHTML = "🚫 Por favor, selecciona una nave.";
+        return;
+    }
 
-  // Obtén la nave directamente con la URL
-  const ship = await fetch(shipUrl).then(res => res.json());
+    resultDiv.innerHTML = "🔍 Buscando...";
 
-  if (ship.pilots.length === 0) {
-    resultDiv.innerHTML = `❗ La nave "${ship.name}" no tiene pilotos registrados.`;
-    return;
-  }
+    const ship = await fetch(shipUrl).then(res => res.json());
 
-  const pilotData = await Promise.all(
-    ship.pilots.map(url => fetch(url).then(res => res.json()))
-  );
+    if (ship.pilots.length === 0) {
+        resultDiv.innerHTML = `❗ La nave "${ship.name}" no tiene pilotos registrados.`;
+        return;
+    }
 
-  resultDiv.innerHTML = `<strong>Pilotos de ${ship.name}:</strong><ul>` +
-    pilotData.map(p => `<li>${p.name}</li>`).join("") + "</ul>";
+    const pilotData = await Promise.all(
+        ship.pilots.map(url => fetch(url).then(res => res.json()))
+    );
+
+    resultDiv.innerHTML = `<strong>Pilotos de ${ship.name}:</strong><ul>` +
+        pilotData.map(p => `<li>${p.name}</li>`).join("") + "</ul>";
 }
-
-
 
 async function countSpeciesByFilm() {
     const select = document.getElementById("filmSelect");
@@ -172,21 +163,19 @@ async function showMostPopulatedPlanet() {
 }
 
 async function loadStarshipOptions() {
-  const select = document.getElementById("shipSelect");
-  const ships = await getAllStarships();
+    const select = document.getElementById("shipSelect");
+    const ships = await getAllStarships();
 
-  ships.forEach(ship => {
-    const option = document.createElement("option");
-    option.value = ship.url;  // Usa la URL como valor único
-    option.textContent = ship.name;
-    select.appendChild(option);
-  });
+    ships.forEach(ship => {
+        const option = document.createElement("option");
+        option.value = ship.url;
+        option.textContent = ship.name;
+        select.appendChild(option);
+    });
 }
 
-// Carga inicial
+// 🚀 Carga inicial
 loadAll();
 loadFilmOptions();
 showMostPopulatedPlanet();
-// Al final de tu script o dentro de una función de inicialización
 loadStarshipOptions();
-
