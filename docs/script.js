@@ -131,16 +131,24 @@ async function countSpeciesByFilm() {
 
     for (let person of peopleData) {
         if (person.species.length === 0) {
-            speciesCount["human"] = (speciesCount["human"] || 0) + 1;
+            speciesCount["Human"] = (speciesCount["Human"] || 0) + 1;
         } else {
             const species = await fetch(person.species[0]).then(res => res.json());
             speciesCount[species.name] = (speciesCount[species.name] || 0) + 1;
         }
     }
 
-    summaryDiv.innerHTML = `<strong>Censo de especies en ${film.title}:</strong><ul>` +
-        Object.entries(speciesCount).map(([sp, cnt]) => `<li>${sp}: ${cnt}</li>`).join("") + "</ul>";
+    // Crear las cards para cada especie
+    summaryDiv.innerHTML = `<h3>Censo de especies en ${film.title}:</h3><div class="species-cards-container">` +
+        Object.entries(speciesCount).map(([species, count]) => `
+            <div class="species-card">
+                <h4>${species}</h4>
+                <p><strong>${count}</strong> individuos</p>
+            </div>
+        `).join("") +
+        `</div>`;
 }
+
 
 async function loadFilmOptions() {
     const filmSelect = document.getElementById("filmSelect");
